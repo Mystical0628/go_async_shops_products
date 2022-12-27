@@ -2,22 +2,17 @@ package main
 
 import (
 	"database/sql"
-	"github.com/schollz/progressbar/v3"
 	"go-mysql-test/helper"
 	"log"
 	"reflect"
-	"sync"
 	"time"
 )
 
 type app struct {
 	db            *sql.DB
-	wg            sync.WaitGroup
 	time          time.Time
 	timeFormatted string
 	viewCreated   bool
-	bar           *progressbar.ProgressBar
-	productsTotal int
 }
 
 func NewApp() *app {
@@ -29,18 +24,16 @@ func NewApp() *app {
 
 	return &app{
 		db:            db,
-		wg:            sync.WaitGroup{},
 		time:          time,
 		timeFormatted: timeFormatted,
 		viewCreated:   true,
 	}
 }
 
-func (app *app) RunMethod(method string, bundleSize int) {
+func (app *app) CallAction(method string, threads int) {
 	startTime := time.Now()
-	app.bar = progressbar.Default(int64(app.productsTotal))
 
-	arguments := []reflect.Value{reflect.ValueOf(bundleSize)}
+	arguments := []reflect.Value{reflect.ValueOf(threads)}
 
 	reflect.ValueOf(app).MethodByName("Action" + method).Call(arguments)
 
@@ -48,16 +41,5 @@ func (app *app) RunMethod(method string, bundleSize int) {
 }
 
 func (app *app) Run() {
-	app.productsTotal = app.getProductsTotal()
-
-	// app.productsTotal = 1000000
-
-	app.RunMethod("Simple", 0)
-	app.RunMethod("SimpleAsync", 1)
-	app.RunMethod("SimpleAsync", 10)
-	app.RunMethod("SimpleAsync", 100)
-	// app.RunMethod("Bundles", 50000)
-	// app.RunMethod("BundlesAsync", 50000)
-
-	app.wg.Wait()
+	app.CallAction("Index", 10)
 }
