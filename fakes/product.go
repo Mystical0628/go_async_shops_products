@@ -11,7 +11,7 @@ type Product struct {
 	ShopId      int     `faker:"fakeShopId"`
 	Price       float32 `faker:"fakePrice32"`
 	Name        string  `faker:"name"`
-	Description string  `faker:"paragraph"`
+	Description string  `faker:"html"`
 }
 
 func (p Product) InsertString() string {

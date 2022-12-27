@@ -6,6 +6,30 @@ import (
 	"os"
 )
 
+type Shop struct {
+	XMLName  xml.Name   `xml:"shop"`
+	Id       int        `xml:"id,attr"`
+	Name     string     `xml:"name"`
+	Url      string     `xml:"url"`
+	OpensAt  string     `xml:"open"`
+	ClosesAt string     `xml:"close"`
+	Products []*Product `xml:"offers"`
+}
+
+func (p *Shop) Render(file *os.File) {
+	data, err := xml.MarshalIndent(p, " ", "    ")
+
+	if err != nil {
+		log.Fatalf("Error while xml.MarshalIndent: %v", err)
+	}
+
+	_, err = file.Write(data)
+
+	if err != nil {
+		log.Fatalf("Error while write to file: %v", err)
+	}
+}
+
 type Products struct {
 	XMLName  xml.Name   `xml:"offers"`
 	Products []*Product `xml:"item"`
@@ -35,8 +59,6 @@ type Product struct {
 }
 
 func (p *Product) Render(file *os.File) {
-	file, err := os.OpenFile("products_bundle.xml", os.O_APPEND|os.O_WRONLY, os.ModePerm)
-
 	data, err := xml.MarshalIndent(p, " ", "    ")
 
 	if err != nil {
@@ -48,6 +70,4 @@ func (p *Product) Render(file *os.File) {
 	if err != nil {
 		log.Fatalf("Error while write to file: %v", err)
 	}
-
-	file.Close()
 }

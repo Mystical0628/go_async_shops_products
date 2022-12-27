@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 func LoadEnv() {
@@ -37,6 +38,10 @@ func ConnectDb() *sql.DB {
 	if err != nil {
 		log.Fatalf("Error pinging DB: %v", err)
 	}
+
+	db.SetConnMaxLifetime(time.Second * 0)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(5)
 
 	return db
 }

@@ -23,10 +23,6 @@ type app struct {
 func NewApp() *app {
 	db := helper.ConnectDb()
 
-	db.SetConnMaxLifetime(time.Second * 1)
-	db.SetMaxOpenConns(30)
-	db.SetMaxIdleConns(10)
-
 	time := time.Now()
 	// timeFormatted := time.Format("15:04:05")
 	timeFormatted := "12:00:00"
@@ -52,12 +48,15 @@ func (app *app) RunMethod(method string, bundleSize int) {
 }
 
 func (app *app) Run() {
-	// app.productsTotal := app.getProductsTotal()
+	app.productsTotal = app.getProductsTotal()
 
-	app.productsTotal = 1000000
+	// app.productsTotal = 1000000
 
 	app.RunMethod("Simple", 0)
-	app.RunMethod("Bundles", 50000)
+	app.RunMethod("SimpleAsync", 1)
+	app.RunMethod("SimpleAsync", 10)
+	app.RunMethod("SimpleAsync", 100)
+	// app.RunMethod("Bundles", 50000)
 	// app.RunMethod("BundlesAsync", 50000)
 
 	app.wg.Wait()

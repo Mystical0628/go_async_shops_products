@@ -1,6 +1,7 @@
 package fakes
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/bxcodec/faker/v4"
@@ -43,6 +44,46 @@ func init() {
 	_ = faker.AddProvider("fakeClosesAt", func(v reflect.Value) (interface{}, error) {
 		return fmt.Sprintf("%02d:%02d:00", 13+rand.Intn(24-13+1), 0+rand.Intn(5-0+1)*10), nil
 	})
+
+	_ = faker.AddProvider("html", func(v reflect.Value) (interface{}, error) {
+		htmlBuf := &bytes.Buffer{}
+		randHtmlTag(htmlBuf)
+
+		return htmlBuf.String(), nil
+	})
+}
+
+func randHtml(htmlBuf *bytes.Buffer) {
+	switch rand.Intn(3) {
+	case 0:
+		htmlBuf.WriteString(faker.Paragraph())
+	case 1:
+		htmlBuf.WriteString(faker.Sentence())
+	case 2:
+		htmlBuf.WriteString(faker.Word())
+	case 3:
+		randHtmlTag(htmlBuf)
+	case 4:
+		randHtmlSingleTag(htmlBuf)
+	}
+}
+
+func randHtmlTag(htmlBuf *bytes.Buffer) {
+	tags := []string{"div", "p", "span", "a", "button", "code"}
+	randTag := tags[rand.Intn(len(tags)-1)]
+
+	htmlBuf.WriteString(fmt.Sprintf("<%s>", randTag))
+	for i := 0; i < 2+rand.Intn(3); i++ {
+		randHtml(htmlBuf)
+	}
+	htmlBuf.WriteString(fmt.Sprintf("<%s>", randTag))
+}
+
+func randHtmlSingleTag(htmlBuf *bytes.Buffer) {
+	tags := []string{"br", "img", "meta"}
+	randTag := tags[rand.Intn(len(tags)-1)]
+
+	htmlBuf.WriteString(fmt.Sprintf("<%s/>", randTag))
 }
 
 type Faker interface{}
