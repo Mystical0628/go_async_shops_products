@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
-	"go-mysql-test/helper"
+	"go_async_shops_products/helper"
 	"log"
 	"os"
 	"path/filepath"

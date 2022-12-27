@@ -69,13 +69,28 @@ func CreateFile(filename string) error {
 	return f.Close()
 }
 
-func GetFlagArgs() []string {
-	flag.Parse()
+func InitFlagSet(args []string, usage string, commandsUsage []string) *flag.FlagSet {
+	flagSet := flag.NewFlagSet("seeder", flag.ExitOnError)
+	flagHelp := flagSet.Bool("help", false, "Print help information")
 
-	if len(flag.Args()) < 1 {
-		flag.Usage()
+	flagSet.Usage = func() {
+		fmt.Println(usage)
+		fmt.Println("Commands:")
+		for _, usage := range commandsUsage {
+			fmt.Println("  " + usage)
+		}
+		fmt.Println("Options:")
+		flagSet.PrintDefaults()
+	}
+
+	if err := flagSet.Parse(args); err != nil {
+		log.Fatal(err)
+	}
+
+	if len(flagSet.Args()) < 1 || *flagHelp {
+		flagSet.Usage()
 		os.Exit(2)
 	}
 
-	return flag.Args()[1:]
+	return flagSet
 }

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/bxcodec/faker/v4"
-	"go-mysql-test/helper"
+	"go_async_shops_products/helper"
 	"log"
 	"math"
 	"math/rand"

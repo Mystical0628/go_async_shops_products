@@ -1,18 +1,21 @@
-package main
+package app
 
 import (
 	"database/sql"
-	"go-mysql-test/helper"
+	"errors"
+	"fmt"
+	"go_async_shops_products/helper"
 	"log"
 	"reflect"
 	"time"
 )
 
+const Usage = "start                               Start application"
+
 type app struct {
 	db            *sql.DB
 	time          time.Time
 	timeFormatted string
-	viewCreated   bool
 }
 
 func NewApp() *app {
@@ -26,7 +29,6 @@ func NewApp() *app {
 		db:            db,
 		time:          time,
 		timeFormatted: timeFormatted,
-		viewCreated:   true,
 	}
 }
 
@@ -42,4 +44,16 @@ func (app *app) CallAction(method string, threads int) {
 
 func (app *app) Run() {
 	app.CallAction("Index", 10)
+}
+
+func Main(args []string) error {
+	app := NewApp()
+	defer app.db.Close()
+	app.Run()
+
+	if err := app.db.Close(); err != nil {
+		errors.New(fmt.Sprintf("error start: error while closing database %v", err))
+	}
+
+	return nil
 }

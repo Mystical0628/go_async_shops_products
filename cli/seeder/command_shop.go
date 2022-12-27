@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/schollz/progressbar/v3"
-	"go-mysql-test/fakes"
+	"go_async_shops_products/fakes"
 	"strconv"
 )
 

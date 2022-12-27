@@ -2,7 +2,7 @@ package seeder
 
 import (
 	"database/sql"
-	"go-mysql-test/cli/cli"
+	"go_async_shops_products/cli"
 )
 
 type commandSeed struct {

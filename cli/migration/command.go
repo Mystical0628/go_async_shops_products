@@ -2,7 +2,7 @@ package migration
 
 import (
 	"github.com/golang-migrate/migrate/v4"
-	"go-mysql-test/cli/cli"
+	"go_async_shops_products/cli"
 )
 
 //type Commander interface {

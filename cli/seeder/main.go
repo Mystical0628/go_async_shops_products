@@ -3,74 +3,63 @@ package seeder
 import (
 	"database/sql"
 	"errors"
-	"flag"
 	"fmt"
-	"go-mysql-test/cli/cli"
-	"go-mysql-test/helper"
+	"go_async_shops_products/cli"
+	"go_async_shops_products/helper"
 	"log"
-	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func initFlagUsage() {
-	flag.Usage = func() {
-		fmt.Fprintf(
-			os.Stderr,
-			`Usage: seeder OPTIONS SEED [arg...]
-       seeder [ -help ]
-Options:
-  -help            Print usage
-Seeds:
-  %s
-  %s
-  %s
-`, CommandProductUsage, CommandShopUsage, CommandTruncateUsage)
-	}
-}
+const Usage = `seeder OPTIONS SEED [arg...]        Sow database
+	seeder [ -help ]`
+var CommandsUsage = []string{CommandProductUsage, CommandShopUsage, CommandTruncateUsage}
 
-func createCommand(seedName string, args []string, db *sql.DB) (cli.Commander, error) {
-	switch seedName {
+func createCommand(args []string, db *sql.DB) (cli.Commander, error) {
+	log.Println(args[0])
+	switch args[0] {
 	case "product":
-		return NewCommandProduct(args, db), nil
+		return NewCommandProduct(args[1:], db), nil
 
 	case "shop":
-		return NewCommandShop(args, db), nil
+		return NewCommandShop(args[1:], db), nil
 
 	case "truncate":
 		helper.ConfirmAction("Are you sure you want to truncate TABLE? [y/N]")
-
-		return NewCommandTruncate(args, db), nil
+		return NewCommandTruncate(args[1:], db), nil
 
 	default:
-		return nil, errors.New("command does`t exists")
+		return nil, errors.New("error createCommand: command does`t exists")
 	}
 }
 
-func processArgs(args []string, db *sql.DB) {
+func processArgs(args []string, db *sql.DB) error {
 	var cmd cli.Commander
 
-	cmd, err := createCommand(flag.Arg(0), args, db)
+	cmd, err := createCommand(args, db)
 
 	if err == nil {
 		err = cli.RunCommand(cmd)
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		return errors.New(fmt.Sprintf("error processArgs: " + err.Error()))
 	}
+
+	return err
 }
 
-func Main() {
-	initFlagUsage()
-
+func Main(args []string) error {
+	flagSet := helper.InitFlagSet(args, Usage, CommandsUsage)
 	db := helper.ConnectDb()
-	args := helper.GetFlagArgs()
 
 	startTime := time.Now()
-
-	processArgs(args, db)
-
+	err := processArgs(flagSet.Args(), db)
 	log.Println("Finished after", time.Since(startTime))
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("error cli/seeder: " + err.Error()))
+	}
+	return nil
 }

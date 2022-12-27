@@ -2,11 +2,10 @@ package migration
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
-	"go-mysql-test/cli/cli"
-	"go-mysql-test/helper"
+	"go_async_shops_products/cli"
+	"go_async_shops_products/helper"
 	"log"
 	"os"
 	"os/signal"
@@ -17,6 +16,10 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
+
+const Usage = `migration OPTIONS COMMAND [arg...]  Manage Migrations
+	migration [ -help ]`
+var CommandsUsage = []string{CommandCreateUsage, CommandDeleteUsage, CommandUpUsage, CommandDownUsage, CommandForceUsage}
 
 func initMigrater() *migrate.Migrate {
 	db := helper.ConnectDb()
@@ -60,84 +63,58 @@ func initMigrater() *migrate.Migrate {
 	return migrater
 }
 
-func initFlagUsage() {
-	flag.Usage = func() {
-		fmt.Fprintf(
-			os.Stderr,
-			`Usage: migration OPTIONS COMMAND [arg...]
-       migration [ -help ]
-Options:
-  -help            Print usage
-Commands:
-  %s
-  %s
-  %s
-  %s
-  %s
-`, CommandCreateUsage, CommandDeleteUsage, CommandUpUsage, CommandDownUsage, CommandForceUsage)
-	}
-}
-
-func parseFlagArgs() []string {
-	flag.Parse()
-
-	if len(flag.Args()) < 1 {
-		flag.Usage()
-		os.Exit(2)
-	}
-
-	return flag.Args()[1:]
-}
-
-func createCommand(cmdName string, args []string, migrater *migrate.Migrate) (cli.Commander, error) {
-	switch cmdName {
+func createCommand(args []string, migrater *migrate.Migrate) (cli.Commander, error) {
+	switch args[0] {
 	case "create":
-		return NewCommandCreate(args, migrater), nil
+		return NewCommandCreate(args[1:], migrater), nil
 
 	case "delete":
 		helper.ConfirmAction("Are you sure you want to DELETE migrations? [y/N]")
 
-		return NewCommandDelete(args, migrater), nil
+		return NewCommandDelete(args[1:], migrater), nil
 
 	case "up":
-		return NewCommandUp(args, migrater), nil
+		return NewCommandUp(args[1:], migrater), nil
 
 	case "down":
 		helper.ConfirmAction("Are you sure you want to DOWN migrations? [y/N]")
 
-		return NewCommandDown(args, migrater), nil
+		return NewCommandDown(args[1:], migrater), nil
 
 	case "force":
-		return NewCommandForce(args, migrater), nil
+		return NewCommandForce(args[1:], migrater), nil
 
 	default:
-		return nil, errors.New("command does`t exists")
+		return nil, errors.New("error createCommand: command does`t exists")
 	}
 }
 
-func processArgs(args []string, migrater *migrate.Migrate) {
+func processArgs(args []string, migrater *migrate.Migrate) error {
 	var cmd cli.Commander
 
-	cmd, err := createCommand(flag.Arg(0), args, migrater)
+	cmd, err := createCommand(args, migrater)
 
 	if err == nil {
 		err = cli.RunCommand(cmd)
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		return errors.New(fmt.Sprintf("error processArgs: " + err.Error()))
 	}
+
+	return nil
 }
 
-func Main() {
-	initFlagUsage()
-
+func Main(args []string) error {
+	flagSet := helper.InitFlagSet(args, Usage, CommandsUsage)
 	migrater := initMigrater()
-	args := helper.GetFlagArgs()
 
 	startTime := time.Now()
-
-	processArgs(args, migrater)
-
+	err := processArgs(flagSet.Args(), migrater)
 	log.Println("Finished after", time.Since(startTime))
+
+	if err != nil {
+		return errors.New(fmt.Sprintf("error cli/migration: " + err.Error()))
+	}
+	return nil
 }
