@@ -1,4 +1,38 @@
-***
+___
+
+## App
+
+#### Attention!
+Before starting app configure environments and run migrations
+
+### Base usage
+```bash
+$ start -help
+Usage: start                               Start application
+       start [ -help ]
+Options:
+  -help
+        Print help information
+  -products int
+        Count of products to process
+  -shops int
+        Count of shops to process
+  -threads int
+        Count od threads (default 10)
+
+
+```
+
+### Start app
+To start App type:
+```bash
+$ go run . start
+```
+
+
+
+
+---
 
 ## Configuration
 
@@ -6,7 +40,7 @@ __Configuration variables are located in the root directory in the environment f
 
 ### Database
 ```
-DB_DRIVER               # DB driver, NOT USED YET. Default - mysql
+DB_DRIVER               # DB driver. Default - mysql
 DB_HOST                 # DB host. Default - 127.0.0.1
 DB_PORT                 # DB port. Default - 3306
 DB_DATABASE             # DB database name. Default - go_mysql_test
@@ -34,32 +68,30 @@ __Database migrations written in Go using library [golang-migrate/migrate](https
 ### Base usage
 ```bash
 $ migrate -help
-Usage: migrate OPTIONS COMMAND [arg...]
-       migrate [ -help ]
-Options:
-  -help            Print usage
+Usage: migration OPTIONS COMMAND [arg...]
+       migration [ -help ]
 Commands:
   create NAME     Create a set of timestamped up/down migrations titled NAME
   delete V        Delete migration version V
   up [N] [-all]   Apply all or N up migrations
   down [N] [-all] Apply all or N down migrations
-  drop            Drop everything inside database
   force V         Set version V but don`t run migration (ignores dirty state)
+Options:
+  -help           Print help information
 ```
 
 ### Start migrations
 So to start migrations type:
 ```bash
-$ go run migration.go up -all # Apply all migrations
+$ go run . migration up -all # Apply all migrations
 ```
 
 ### Errors
 If you get an error *"Dirty database version V. Fix and force version."* while use ```up``` or ```down```  Try to fix an error and type
 ```bash
-$ go run migration.go force V
+$ go run . migration force V
 ```
 and then try to execute the command again.
-***
 
 
 
@@ -78,18 +110,18 @@ Due to the fact that the products table depends on shops table (by column shop_i
 $ seeder -help
 Usage: seeder OPTIONS SEED [arg...]
        seeder [ -help ]
-Options:
-  -help            Print usage
 Seeds:
   product [N]     Sow N products
   shop [N]        Sow N shops
   truncate TABLE  Truncate the table TABPLE
+Options:
+  -help           Print help information
 ```
 
 ### Start seeding
 So to start seeding type:
 ```bash
-$ go run seeder.go SEED [N] # Apply all migrations
+$ go run . seeder SEED [N] # Apply all migrations
 ```
 
 

@@ -12,7 +12,8 @@ import (
 	"time"
 )
 
-const Usage = "start                               Start application"
+const Usage = `start                               Start application
+	start [ -help ]`
 
 type app struct {
 	db            *sql.DB
@@ -51,7 +52,6 @@ func (app *app) CallAction(method string, threads int) {
 
 func (app *app) Run() {
 	app.CallAction("Index", 10)
-	app.CallAction("All", 10)
 }
 
 func (app *app) initFlagSet(args []string) {

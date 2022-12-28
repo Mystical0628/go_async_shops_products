@@ -10,5 +10,3 @@ ALTER TABLE products ADD
     CONSTRAINT products_shops_fk
     FOREIGN KEY (shop_id)
         REFERENCES shops (id);
-
--- TODO add ADD INDEX statment

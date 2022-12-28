@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/bxcodec/faker/v4"
 	"go_async_shops_products/helper"
-	"log"
 	"math"
 	"math/rand"
 	"reflect"
@@ -22,7 +21,7 @@ func init() {
 	var shopsCount int
 	err := db.QueryRow("SELECT COUNT(*) as total FROM shops").Scan(&shopsCount)
 	if err != nil {
-		log.Fatal(err)
+		shopsCount = 0
 	}
 
 	_ = faker.AddProvider("fakeShopId", func(v reflect.Value) (interface{}, error) {
