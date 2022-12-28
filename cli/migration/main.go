@@ -31,15 +31,6 @@ func initMigrater() *migrate.Migrate {
 		driver,
 	)
 
-	defer func() {
-		if err == nil {
-			// TODO Solve error
-			//if _, closeErr := migrater.Close(); err != nil {
-			//	log.Println(closeErr)
-			//}
-		}
-	}()
-
 	if err != nil {
 		log.Fatal(err)
 	}

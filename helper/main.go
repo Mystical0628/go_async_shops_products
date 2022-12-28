@@ -87,7 +87,7 @@ func InitFlagSet(args []string, usage string, commandsUsage []string) *flag.Flag
 		log.Fatal(err)
 	}
 
-	if len(flagSet.Args()) < 1 || *flagHelp {
+	if flagSet.NArg() == 0 || *flagHelp {
 		flagSet.Usage()
 		os.Exit(2)
 	}

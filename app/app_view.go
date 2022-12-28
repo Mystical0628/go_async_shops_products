@@ -36,4 +36,5 @@ type Product struct {
 	Price       float32  `xml:"price"`
 	Name        string   `xml:"name"`
 	Description string   `xml:"description"`
+	// Description string   `xml:"-"`
 }

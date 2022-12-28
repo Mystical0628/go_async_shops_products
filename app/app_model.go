@@ -5,12 +5,20 @@ import (
 	"log"
 )
 
-func (app *app) getShops() []*Shop {
-	rows, err := app.db.Query(`
+func (app *app) getShops(limit int) []*Shop {
+	query := `
 		SELECT id, name, url, opens_at, closes_at
 		FROM shops 
 		WHERE opens_at <= ? AND closes_at >= ? 
-		`, app.timeFormatted, app.timeFormatted)
+	`
+	args := []any{app.timeFormatted, app.timeFormatted}
+
+	if limit != 0 {
+		query += "LIMIT ?"
+		args = append(args, limit)
+	}
+
+	rows, err := app.db.Query(query, args...)
 
 	if err != nil {
 		log.Fatalf("Error while selecting shops: %v", err)
@@ -47,14 +55,56 @@ func (app *app) getShopProductsTotal(shopId int) int {
 	return total
 }
 
-func (app *app) getShopProductsRows(shopId int) *sql.Rows {
-	rows, err := app.db.Query(`
-		SELECT p.id, p.name, p.description, p.price
-		FROM products p
-		WHERE p.shop_id = ? LIMIT 0, 10`, shopId)
+func (app *app) getShopProductsRows(shopId int, limit int) *sql.Rows {
+	query := `
+		SELECT id, name, description, price
+		FROM products 
+		WHERE shop_id = ?
+	`
+	args := []any{shopId}
+
+	if limit != 0 {
+		query += "LIMIT ?"
+		args = append(args, limit)
+	}
+
+	rows, err := app.db.Query(query, args...)
 
 	if err != nil {
-		log.Fatalf("Error while selecting shops: %v", err)
+		log.Fatalf("Error getShopProductsRows: %v", err)
+	}
+
+	return rows
+}
+
+func (app *app) getProductsTotal() int {
+	var total int
+
+	app.db.QueryRow(`
+		SELECT COUNT(*) AS total
+		FROM products
+	`).Scan(&total)
+
+	return total
+}
+
+func (app *app) getProductsRows(limit int) *sql.Rows {
+	query := `
+		SELECT id, name, description, price
+		FROM products 
+		ORDER BY shop_id, id
+	`
+	var args []any
+
+	if limit != 0 {
+		query += "LIMIT ?"
+		args = append(args, limit)
+	}
+
+	rows, err := app.db.Query(query, args...)
+
+	if err != nil {
+		log.Fatalf("Error getProductsRows: %v", err)
 	}
 
 	return rows
