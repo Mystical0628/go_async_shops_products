@@ -72,6 +72,12 @@ func (app *app) ActionIndex() {
 	}
 }
 
+func (app *app) ActionAll() {
+	// enc := app.initEncoder("shops_products.xml")
+
+	// shops := app.getShops(*app.flagShops)
+}
+
 func (app *app) initBarWgMutexChan(barMax int, barName string) (
 	*progressbar.ProgressBar,
 	*sync.WaitGroup,
@@ -126,7 +132,7 @@ func productWorker(
 	mutex *sync.Mutex,
 	productsChan chan Product,
 	enc *xml.Encoder,
-	) {
+) {
 	defer wg.Done()
 
 	for item := range productsChan {

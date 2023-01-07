@@ -8,5 +8,5 @@ CREATE TABLE shops (
 
 ALTER TABLE products ADD
     CONSTRAINT products_shops_fk
-    FOREIGN KEY (shop_id)
-        REFERENCES shops (id);
+        FOREIGN KEY (shop_id)
+            REFERENCES shops (id);

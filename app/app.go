@@ -19,11 +19,11 @@ type app struct {
 	db            *sql.DB
 	time          time.Time
 	timeFormatted string
-	flagSet 	*flag.FlagSet
-	flagHelp 	*bool
-	flagThreads 	*int
-	flagShops 		*int
-	flagProducts 	*int
+	flagSet       *flag.FlagSet
+	flagHelp      *bool
+	flagThreads   *int
+	flagShops     *int
+	flagProducts  *int
 }
 
 func NewApp() *app {
@@ -52,6 +52,7 @@ func (app *app) CallAction(method string, threads int) {
 
 func (app *app) Run() {
 	app.CallAction("Index", 10)
+	app.CallAction("All", 10)
 }
 
 func (app *app) initFlagSet(args []string) {

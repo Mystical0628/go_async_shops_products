@@ -59,7 +59,6 @@ func (cmd *commandUp) Parse() error {
 	return err
 }
 
-// NewCommandUp TODO add flag -all
 func NewCommandUp(args []string, migrater *migrate.Migrate) *commandUp {
 	cmd := NewCommand("up", args, CommandUpUsage, migrater)
 	cmd.AllowNoArgs()
