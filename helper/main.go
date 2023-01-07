@@ -70,8 +70,14 @@ func CreateFile(filename string) error {
 }
 
 func InitFlagSet(args []string, usage string, commandsUsage []string) *flag.FlagSet {
+	return InitFlagSetCallback(args, usage, commandsUsage, nil)
+}
+
+func InitFlagSetCallback(args []string, usage string, commandsUsage []string, callbackFlagSet func(set *flag.FlagSet)) *flag.FlagSet {
 	flagSet := flag.NewFlagSet("seeder", flag.ExitOnError)
 	flagHelp := flagSet.Bool("help", false, "Print help information")
+
+	callbackFlagSet(flagSet)
 
 	flagSet.Usage = func() {
 		fmt.Println(usage)
