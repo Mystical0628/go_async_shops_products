@@ -10,8 +10,8 @@ type Shop struct {
 	Id       int        `xml:"id,attr"`
 	Name     string     `xml:"name"`
 	Url      string     `xml:"url"`
-	OpensAt  string     `xml:"open"`
-	ClosesAt string     `xml:"close"`
+	OpensAt  string     `xml:"working_time>open"`
+	ClosesAt string     `xml:"working_time>close"`
 	Products []*Product `xml:"offers>item"`
 }
 

@@ -78,7 +78,9 @@ func InitFlagSetCallback(args []string, usage string, commandsUsage []string, ca
 	flagHelp := flagSet.Bool("help", false, "Print help information")
 	allowNoArgs := false
 
-	callbackFlagSet(flagSet, flagHelp, &allowNoArgs)
+	if callbackFlagSet != nil {
+		callbackFlagSet(flagSet, flagHelp, &allowNoArgs)
+	}
 
 	flagSet.Usage = func() {
 		fmt.Println(usage)

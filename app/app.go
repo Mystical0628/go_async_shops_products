@@ -90,7 +90,6 @@ func Main(args []string) error {
 	defer app.db.Close()
 	app.flagSet = helper.InitFlagSetCallback(args, Usage, nil, func(flagSet *flag.FlagSet, flagHelp *bool, allowNoArgs *bool) {
 		*allowNoArgs = true
-
 		app.flagHelp = flagHelp
 		app.flagAll = flagSet.Bool("all", false, "Start all actions")
 		app.flagThreads = flagSet.Int("threads", 10, "Count od threads")
