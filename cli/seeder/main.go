@@ -14,6 +14,7 @@ import (
 
 const Usage = `seeder OPTIONS SEED [arg...]        Sow database
 	seeder [ -help ]`
+
 var CommandsUsage = []string{CommandProductUsage, CommandShopUsage, CommandTruncateUsage}
 
 func createCommand(args []string, db *sql.DB) (cli.Commander, error) {
@@ -61,5 +62,6 @@ func Main(args []string) error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("error cli/seeder: " + err.Error()))
 	}
+
 	return nil
 }

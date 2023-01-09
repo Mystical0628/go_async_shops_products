@@ -73,11 +73,12 @@ func InitFlagSet(args []string, usage string, commandsUsage []string) *flag.Flag
 	return InitFlagSetCallback(args, usage, commandsUsage, nil)
 }
 
-func InitFlagSetCallback(args []string, usage string, commandsUsage []string, callbackFlagSet func(set *flag.FlagSet)) *flag.FlagSet {
+func InitFlagSetCallback(args []string, usage string, commandsUsage []string, callbackFlagSet func(set *flag.FlagSet, flagHelp *bool, allowNoArgs *bool)) *flag.FlagSet {
 	flagSet := flag.NewFlagSet("seeder", flag.ExitOnError)
 	flagHelp := flagSet.Bool("help", false, "Print help information")
+	allowNoArgs := false
 
-	callbackFlagSet(flagSet)
+	callbackFlagSet(flagSet, flagHelp, &allowNoArgs)
 
 	flagSet.Usage = func() {
 		fmt.Println(usage)
@@ -93,7 +94,7 @@ func InitFlagSetCallback(args []string, usage string, commandsUsage []string, ca
 		log.Fatal(err)
 	}
 
-	if flagSet.NArg() == 0 || *flagHelp {
+	if *flagHelp || (!allowNoArgs && flagSet.NArg() == 0) {
 		flagSet.Usage()
 		os.Exit(2)
 	}
