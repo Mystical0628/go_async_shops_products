@@ -75,6 +75,7 @@ func (app *app) ActionIndex() {
 }
 
 func (app *app) ActionAll() {
+	log.Println("Hello ActionAll")
 	// enc := app.initEncoder("shops_products.xml")
 
 	// shops := app.getShops(*app.flagShops)
