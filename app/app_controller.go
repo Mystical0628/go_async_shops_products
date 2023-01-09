@@ -32,12 +32,14 @@ func (app *app) ActionIndex() {
 	shopsElement := xml.StartElement{
 		Name: xml.Name{Local: "shops"},
 	}
+
 	shopElement := xml.StartElement{
 		Name: xml.Name{Local: "shop"},
 		Attr: []xml.Attr{
 			{Name: xml.Name{Local: "id"}, Value: ""},
 		},
 	}
+
 	workingTimeElement := xml.StartElement{Name: xml.Name{Local: "working_time"}}
 	offersElement := xml.StartElement{Name: xml.Name{Local: "offers"}}
 
